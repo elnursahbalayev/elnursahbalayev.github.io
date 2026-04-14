@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elnur Shahbalayev — AI & Computer Vision Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --surface: #111118;
+  --surface2: #16161f;
+  --border: rgba(255,255,255,0.07);
+  --text: #e8e8f0;
+  --text-dim: #7a7a90;
+  --text-muted: #3d3d52;
+  --accent: #6c8fff;
+  --accent2: #a78bfa;
+  --accent3: #34d399;
+  --glow: rgba(108, 143, 255, 0.15);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ── NOISE TEXTURE OVERLAY ─────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* ── GRID LINES ─────────────────────────────────── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: 
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 80px 80px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.3;
+}
+
+/* ── NAV ────────────────────────────────────────── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 clamp(24px, 5vw, 80px);
+  height: 60px;
+  background: rgba(10,10,15,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-logo {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 13px;
+  color: var(--text-dim);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text); }
+
+/* ── LAYOUT ─────────────────────────────────────── */
+main {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 clamp(24px, 5vw, 60px);
+}
+
+section {
+  padding: 100px 0;
+  border-bottom: 1px solid var(--border);
+}
+section:last-child { border-bottom: none; }
+
+/* ── HERO ───────────────────────────────────────── */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 120px;
+  padding-bottom: 80px;
+  position: relative;
+}
+
+.hero-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  animation: fadeUp 0.6s 0.1s forwards;
+}
+.hero-tag::before {
+  content: '';
+  width: 24px; height: 1px;
+  background: var(--accent);
+}
+
+h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(48px, 7vw, 88px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 8px;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.2s forwards;
+}
+
+h1 em {
+  font-style: italic;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(232,232,240,0.4);
+}
+
+.hero-sub {
+  font-size: clamp(15px, 2vw, 18px);
+  color: var(--text-dim);
+  max-width: 560px;
+  margin: 28px 0 48px;
+  font-weight: 300;
+  line-height: 1.8;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.35s forwards;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.5s forwards;
+}
+
+.btn-primary {
+  padding: 13px 28px;
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  border-radius: 6px;
+  transition: all 0.2s;
+  box-shadow: 0 0 30px rgba(108,143,255,0.25);
+}
+.btn-primary:hover {
+  background: #7d9bff;
+  box-shadow: 0 0 40px rgba(108,143,255,0.4);
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  padding: 13px 28px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+.btn-ghost:hover {
+  border-color: rgba(255,255,255,0.2);
+  color: var(--text);
+  background: rgba(255,255,255,0.03);
+}
+
+.hero-stats {
+  display: flex;
+  gap: 48px;
+  margin-top: 72px;
+  padding-top: 48px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.65s forwards;
+}
+
+.stat-item .num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 38px;
+  color: var(--text);
+  line-height: 1;
+  display: block;
+}
+.stat-item .label {
+  font-size: 12px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 6px;
+  display: block;
+}
+
+/* Floating accent orb */
+.hero-orb {
+  position: absolute;
+  right: -100px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(108,143,255,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── SECTION HEADERS ─────────────────────────────── */
+.section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-label::before {
+  content: '';
+  width: 20px; height: 1px;
+  background: var(--accent);
+}
+
+h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin-bottom: 48px;
+}
+
+h2 em {
+  font-style: italic;
+  color: var(--accent2);
+}
+
+/* ── ABOUT ──────────────────────────────────────── */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: start;
+}
+
+@media (max-width: 700px) {
+  .about-grid { grid-template-columns: 1fr; gap: 40px; }
+}
+
+.about-text p {
+  color: var(--text-dim);
+  margin-bottom: 20px;
+  font-weight: 300;
+  font-size: 15.5px;
+}
+
+.about-text p strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.skill-pill {
+  padding: 8px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11.5px;
+  color: var(--text-dim);
+  letter-spacing: 0.03em;
+  transition: all 0.2s;
+}
+.skill-pill:hover {
+  border-color: rgba(108,143,255,0.3);
+  color: var(--accent);
+  background: rgba(108,143,255,0.05);
+}
+.skill-pill.accent { border-color: rgba(108,143,255,0.3); color: var(--accent); }
+.skill-pill.green { border-color: rgba(52,211,153,0.3); color: var(--accent3); }
+
+/* ── EXPERIENCE ──────────────────────────────────── */
+.timeline {
+  position: relative;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--border) 10%, var(--border) 90%, transparent);
+}
+
+.timeline-item {
+  padding-left: 40px;
+  padding-bottom: 56px;
+  position: relative;
+}
+.timeline-item:last-child { padding-bottom: 0; }
+
+.timeline-dot {
+  position: absolute;
+  left: -4px;
+  top: 6px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(108,143,255,0.5);
+}
+
+.job-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.job-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--text);
+}
+
+.job-date {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  padding-top: 5px;
+  white-space: nowrap;
+}
+
+.job-company {
+  font-size: 13px;
+  color: var(--accent);
+  margin-bottom: 16px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+.job-bullets {
+  list-style: none;
+}
+.job-bullets li {
+  color: var(--text-dim);
+  font-size: 14px;
+  font-weight: 300;
+  padding: 5px 0;
+  padding-left: 20px;
+  position: relative;
+}
+.job-bullets li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  top: 7px;
+}
+
+.job-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+.tag {
+  padding: 4px 10px;
+  background: rgba(108,143,255,0.08);
+  border: 1px solid rgba(108,143,255,0.15);
+  border-radius: 3px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10.5px;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+.tag.green {
+  background: rgba(52,211,153,0.08);
+  border-color: rgba(52,211,153,0.15);
+  color: var(--accent3);
+}
+
+/* ── PROJECTS ───────────────────────────────────── */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.project-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 28px;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+}
+.project-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(108,143,255,0.04) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.project-card:hover {
+  border-color: rgba(108,143,255,0.25);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+}
+.project-card:hover::before { opacity: 1; }
+
+.project-icon {
+  font-size: 28px;
+  margin-bottom: 16px;
+  display: block;
+}
+.project-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  color: var(--text);
+  margin-bottom: 8px;
+  font-weight: 400;
+}
+.project-desc {
+  font-size: 13.5px;
+  color: var(--text-dim);
+  font-weight: 300;
+  line-height: 1.65;
+  margin-bottom: 20px;
+}
+.project-metric {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--accent3);
+  letter-spacing: 0.06em;
+  padding: 6px 10px;
+  background: rgba(52,211,153,0.06);
+  border: 1px solid rgba(52,211,153,0.15);
+  border-radius: 3px;
+  display: inline-block;
+}
+
+/* ── SKILLS SECTION ─────────────────────────────── */
+.skills-section-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.skill-category {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.skill-category h3 {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.skill-category ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skill-category li {
+  font-size: 13px;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.skill-category li::before {
+  content: '';
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* ── CONTACT ─────────────────────────────────────── */
+#contact {
+  text-align: center;
+  padding: 120px 0;
+}
+
+.contact-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 72px clamp(24px, 6vw, 80px);
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+.contact-card::before {
+  content: '';
+  position: absolute;
+  top: -80px; left: 50%;
+  transform: translateX(-50%);
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(108,143,255,0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.contact-card p {
+  color: var(--text-dim);
+  font-weight: 300;
+  margin-bottom: 36px;
+  font-size: 16px;
+}
+
+.contact-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.contact-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  text-decoration: none;
+  color: var(--text-dim);
+  font-size: 13px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.04em;
+  transition: all 0.2s;
+}
+.contact-link:hover {
+  border-color: rgba(108,143,255,0.3);
+  color: var(--accent);
+  background: rgba(108,143,255,0.04);
+}
+
+/* ── FOOTER ─────────────────────────────────────── */
+footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 32px;
+  border-top: 1px solid var(--border);
+}
+footer p {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+}
+
+/* ── ANIMATIONS ──────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── MOBILE ──────────────────────────────────────── */
+@media (max-width: 600px) {
+  .nav-links { display: none; }
+  .hero-stats { gap: 28px; }
+  .projects-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#hero" class="nav-logo">ES /</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- ── HERO ── -->
+  <section id="hero">
+    <div class="hero-orb"></div>
+    <div class="hero-tag">Available for remote opportunities</div>
+    <h1>Elnur<br><em>Shahbalayev</em></h1>
+    <p class="hero-sub">
+      Senior AI &amp; Computer Vision Engineer. I build perception systems that run at the edge — drones, robotics, industrial AI. Currently Team Lead at Bayraktar Teknoloji and AI Engineer at Automata Intelligence.
+    </p>
+    <div class="hero-actions">
+      <a href="mailto:elnur@shahbalayev.com" class="btn-primary">Get in touch →</a>
+      <a href="#experience" class="btn-ghost">View my work</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="num">5+</span>
+        <span class="label">Years in AI/CV</span>
+      </div>
+      <div class="stat-item">
+        <span class="num">94%</span>
+        <span class="label">Collision reduction</span>
+      </div>
+      <div class="stat-item">
+        <span class="num">12M</span>
+        <span class="label">Frames/day processed</span>
+      </div>
+      <div class="stat-item">
+        <span class="num">47.2</span>
+        <span class="label">mAP on VisDrone</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ABOUT ── -->
+  <section id="about">
+    <div class="section-label">About</div>
+    <h2>Engineer by craft,<br><em>researcher</em> by instinct</h2>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          I specialise in <strong>real-time computer vision</strong> for resource-constrained environments — Jetson-class hardware, drone platforms, industrial edge nodes. My work spans object detection, 3D stereo fusion, anomaly detection, and multi-stream video analytics.
+        </p>
+        <p>
+          Beyond CV, I'm actively expanding into <strong>LLM infrastructure and agentic AI</strong> — RAG pipelines, VLM fine-tuning, and production deployment patterns. I believe the next frontier is perception models that reason, not just detect.
+        </p>
+        <p>
+          I lead an AI perception team at Bayraktar Teknoloji (UAV systems), consult for Automata Intelligence on international government AI engagements, and teach AI/ML at ASOIU. Completing an MSc via a Warwick/ASOIU dual programme.
+        </p>
+      </div>
+      <div>
+        <div class="skills-grid">
+          <div class="skill-pill accent">TensorRT</div>
+          <div class="skill-pill accent">DeepStream</div>
+          <div class="skill-pill accent">RF-DETR</div>
+          <div class="skill-pill accent">YOLOv8/v11</div>
+          <div class="skill-pill">Jetson Orin</div>
+          <div class="skill-pill">ONNX Runtime</div>
+          <div class="skill-pill">PyTorch</div>
+          <div class="skill-pill">GStreamer</div>
+          <div class="skill-pill green">RAG Pipelines</div>
+          <div class="skill-pill green">LangChain</div>
+          <div class="skill-pill green">LLM Fine-tuning</div>
+          <div class="skill-pill green">VLMs</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── EXPERIENCE ── -->
+  <section id="experience">
+    <div class="section-label">Experience</div>
+    <h2>Where I've <em>built</em> things</h2>
+
+    <div class="timeline">
+
+      <div class="timeline-item reveal">
+        <div class="timeline-dot"></div>
+        <div class="job-header">
+          <div class="job-title">Team Lead — AI Perception</div>
+          <div class="job-date">FEB 2024 — PRESENT</div>
+        </div>
+        <div class="job-company">Bayraktar Teknoloji · Baku, Azerbaijan</div>
+        <ul class="job-bullets">
+          <li>Lead perception pipeline for UAV systems: object detection, tracking, stereo depth, collision avoidance</li>
+          <li>Deployed RF-DETR + TensorRT FP16 on Jetson Orin — 94% reduction in collision incidents in field trials</li>
+          <li>Built multi-stream DeepStream pipeline processing 12M+ frames/day across concurrent drone feeds</li>
+          <li>Achieved 47.2 mAP on VisDrone benchmark; integrated frequency-domain enhancement (FEFE module)</li>
+          <li>Designed hierarchical classification loss for military/civilian vehicle distinction</li>
+        </ul>
+        <div class="job-tags">
+          <span class="tag">TensorRT</span>
+          <span class="tag">DeepStream</span>
+          <span class="tag">RF-DETR</span>
+          <span class="tag">Jetson Orin</span>
+          <span class="tag">Stereo Fusion</span>
+          <span class="tag">ONNX</span>
+        </div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-dot"></div>
+        <div class="job-header">
+          <div class="job-title">Department Head &amp; AI Engineer</div>
+          <div class="job-date">2022 — PRESENT</div>
+        </div>
+        <div class="job-company">Automata Intelligence · London (Remote)</div>
+        <ul class="job-bullets">
+          <li>Lead AI engineering for government and enterprise clients across East Africa and the Gulf</li>
+          <li>Delivered AI coordination layer for eGA (Zanzibar) — pivoted from citizen portal to intelligent API routing system after client discovery</li>
+          <li>Built technical proposals and demo systems for ZRA, ZSSF, ZURA, ADNOC, and MB Group</li>
+          <li>Designed AI Optimizer for ADNOC cogeneration/desalination plant in Ruwais; covered GTG/STG control, KPI methodology, and OT cybersecurity</li>
+        </ul>
+        <div class="job-tags">
+          <span class="tag green">Agentic AI</span>
+          <span class="tag green">LLMs</span>
+          <span class="tag">Python</span>
+          <span class="tag">Dash / FastAPI</span>
+          <span class="tag">System Design</span>
+        </div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-dot"></div>
+        <div class="job-header">
+          <div class="job-title">AI/ML Instructor</div>
+          <div class="job-date">2023 — PRESENT</div>
+        </div>
+        <div class="job-company">ASOIU / X Academy · Baku, Azerbaijan</div>
+        <ul class="job-bullets">
+          <li>Teaching AI/ML Engineering to SABAH Groups (honours cohort) at national technical university</li>
+          <li>Designed full-stack curriculum: Python prerequisites through production model deployment</li>
+          <li>Created original Jupyter notebooks, assessments, and lecture materials from scratch</li>
+        </ul>
+        <div class="job-tags">
+          <span class="tag">PyTorch</span>
+          <span class="tag">scikit-learn</span>
+          <span class="tag">Curriculum Design</span>
+        </div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-dot"></div>
+        <div class="job-header">
+          <div class="job-title">AI Engineer (CV / Robotics)</div>
+          <div class="job-date">2021 — 2022</div>
+        </div>
+        <div class="job-company">Axel Cyber / Risehill · Remote</div>
+        <ul class="job-bullets">
+          <li>Built real-time warehouse robotics tracking system using instance segmentation and Kalman filtering</li>
+          <li>Developed anomaly detection pipeline for industrial inspection (PatchCore, custom augmentation)</li>
+          <li>Satellite imagery segmentation for agricultural monitoring using U-Net variants</li>
+        </ul>
+        <div class="job-tags">
+          <span class="tag">YOLOv8</span>
+          <span class="tag">OpenCV</span>
+          <span class="tag">Segmentation</span>
+          <span class="tag">PySpark</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── PROJECTS ── -->
+  <section id="projects">
+    <div class="section-label">Projects</div>
+    <h2>Things I've <em>shipped</em></h2>
+
+    <div class="projects-grid">
+
+      <div class="project-card reveal">
+        <span class="project-icon">🎯</span>
+        <div class="project-name">RF-DETR UAV Detection</div>
+        <div class="project-desc">Military vehicle detection pipeline for drone footage. TensorRT FP16, custom hierarchical loss, FEFE frequency enhancement. Deployed on Jetson Orin Nano.</div>
+        <div class="project-metric">47.2 mAP · VisDrone benchmark</div>
+        <div class="job-tags" style="margin-top:16px">
+          <span class="tag">RF-DETR</span><span class="tag">TensorRT</span><span class="tag">Jetson</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <span class="project-icon">🌊</span>
+        <div class="project-name">Multi-Stream DeepStream Pipeline</div>
+        <div class="project-desc">12M+ frames/day multi-camera video analytics on NVIDIA GPU. GStreamer + DeepStream + custom CUDA kernels. Real-time tracking across concurrent feeds.</div>
+        <div class="project-metric">12M frames/day · 8 concurrent streams</div>
+        <div class="job-tags" style="margin-top:16px">
+          <span class="tag">DeepStream</span><span class="tag">CUDA</span><span class="tag">GStreamer</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <span class="project-icon">🤖</span>
+        <div class="project-name">eGA AI Coordination Layer</div>
+        <div class="project-desc">AI routing and orchestration system for Zanzibar e-Government Authority. Intelligent API layer that routes citizen service requests to appropriate government endpoints using LLM classification.</div>
+        <div class="project-metric">Government-grade deployment</div>
+        <div class="job-tags" style="margin-top:16px">
+          <span class="tag green">LLMs</span><span class="tag green">Agentic</span><span class="tag">FastAPI</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <span class="project-icon">🏭</span>
+        <div class="project-name">ADNOC Cogeneration AI Optimizer</div>
+        <div class="project-desc">ML-based optimization system for gas turbine and steam turbine generators at Ruwais desalination plant. KPI-driven control loop with OT cybersecurity constraints.</div>
+        <div class="project-metric">Industrial OT · GTG/STG optimization</div>
+        <div class="job-tags" style="margin-top:16px">
+          <span class="tag">Time-series ML</span><span class="tag">OT Security</span><span class="tag">Optimization</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <span class="project-icon">📚</span>
+        <div class="project-name">Collaborative CV Annotation Tool</div>
+        <div class="project-desc">Streamlit + Redis + Docker image labeling application for distributed CV annotation workflows. Built to support the Bayraktar dataset pipeline across team members.</div>
+        <div class="project-metric">Multi-user · Real-time sync</div>
+        <div class="job-tags" style="margin-top:16px">
+          <span class="tag">Streamlit</span><span class="tag">Redis</span><span class="tag">Docker</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <span class="project-icon">🔬</span>
+        <div class="project-name">PV Cell Fault Detection (MSc)</div>
+        <div class="project-desc">Deep learning pipeline for photovoltaic cell defect detection. Dissertation research at University of Warwick — electroluminescence image classification with uncertainty quantification.</div>
+        <div class="project-metric">MSc Dissertation · Warwick/ASOIU</div>
+        <div class="job-tags" style="margin-top:16px">
+          <span class="tag">PyTorch</span><span class="tag">EL Imaging</span><span class="tag">Research</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── SKILLS ── -->
+  <section id="skills">
+    <div class="section-label">Skills</div>
+    <h2>Full <em>stack</em> of tools</h2>
+
+    <div class="skills-section-grid">
+      <div class="skill-category reveal">
+        <h3>Computer Vision</h3>
+        <ul>
+          <li>RF-DETR, YOLOv8/v11, RT-DETR</li>
+          <li>Instance &amp; semantic segmentation</li>
+          <li>Stereo depth &amp; 3D fusion</li>
+          <li>Object tracking (ByteTrack, DeepSORT)</li>
+          <li>Anomaly detection (PatchCore)</li>
+        </ul>
+      </div>
+      <div class="skill-category reveal">
+        <h3>Edge Deployment</h3>
+        <ul>
+          <li>TensorRT (FP16/INT8)</li>
+          <li>ONNX Runtime</li>
+          <li>NVIDIA DeepStream</li>
+          <li>Jetson Orin / Nano</li>
+          <li>GStreamer pipelines</li>
+        </ul>
+      </div>
+      <div class="skill-category reveal">
+        <h3>LLM &amp; Agentic AI</h3>
+        <ul>
+          <li>RAG pipeline design</li>
+          <li>LangChain / LlamaIndex</li>
+          <li>VLM fine-tuning (LLaVA, Qwen-VL)</li>
+          <li>Prompt engineering</li>
+          <li>Agent orchestration</li>
+        </ul>
+      </div>
+      <div class="skill-category reveal">
+        <h3>ML Engineering</h3>
+        <ul>
+          <li>PyTorch (custom losses, training loops)</li>
+          <li>Hugging Face ecosystem</li>
+          <li>MLflow, Weights &amp; Biases</li>
+          <li>Docker, CI/CD</li>
+          <li>FastAPI, Streamlit</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CONTACT ── -->
+  <section id="contact">
+    <div class="contact-card reveal">
+      <div class="section-label" style="justify-content:center">Contact</div>
+      <h2 style="margin-bottom:16px">Let's build<br><em>something</em></h2>
+      <p>Open to senior/staff remote roles in computer vision, ML engineering, and LLM infrastructure. UTC+4, available for EU/UK hours.</p>
+      <a href="mailto:elnur@shahbalayev.com" class="btn-primary" style="display:inline-block">elnur@shahbalayev.com</a>
+      <div class="contact-links">
+        <a href="https://linkedin.com/in/elnur-shahbalayev" class="contact-link" target="_blank">
+          <span>↗</span> linkedin.com/in/elnur-shahbalayev
+        </a>
+        <a href="https://github.com/elnur-shahbalayev" class="contact-link" target="_blank">
+          <span>↗</span> github.com/elnur-shahbalayev
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>© 2026 Elnur Shahbalayev · shahbalayev.com · Built with intention</p>
+</footer>
+
+<script>
+// Intersection observer for scroll reveals
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Stagger child reveals
+document.querySelectorAll('.projects-grid, .skills-section-grid').forEach(grid => {
+  const children = grid.querySelectorAll('.reveal');
+  children.forEach((child, i) => {
+    child.style.transitionDelay = `${i * 80}ms`;
+  });
+});
+</script>
+
+</body>
+</html>
