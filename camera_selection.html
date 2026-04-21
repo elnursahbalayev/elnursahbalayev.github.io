@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Choosing the Right Camera for Your Computer Vision Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #fafafa;
+    --paper-dark: #f0f0f0;
+    --ink: #0d0d0d;
+    --ink-soft: #2a2a2a;
+    --ink-mute: #757575;
+    --rule: #d4d4d4;
+    --rule-soft: #e5e5e5;
+    --accent: #d72638;
+    --accent-soft: #f25c6a;
+    --measure: 38rem;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Newsreader', Georgia, serif;
+    font-size: 19px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Subtle technical grid dot pattern */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background-image: radial-gradient(circle, #d4d4d4 0.5px, transparent 0.5px);
+    background-size: 24px 24px;
+    opacity: 0.35;
+  }
+
+  .page {
+    max-width: 64rem;
+    margin: 0 auto;
+    padding: 5rem 2rem 6rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Header */
+  .masthead {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 4rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+
+  .masthead .brand { color: var(--ink); font-weight: 500; }
+  .masthead .meta { display: flex; gap: 1.5rem; }
+  .masthead .meta span::before { content: '·'; margin-right: 1.5rem; color: var(--rule); }
+  .masthead .meta span:first-child::before { display: none; }
+
+  /* Title block */
+  .title-block {
+    margin-bottom: 4rem;
+    max-width: 50rem;
+  }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    display: inline-block;
+  }
+
+  h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-optical-sizing: auto;
+    font-variation-settings: 'opsz' 144, 'SOFT' 50;
+    font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+    font-weight: 400;
+    line-height: 1.02;
+    letter-spacing: -0.022em;
+    color: var(--ink);
+    margin-bottom: 2rem;
+  }
+
+  h1 em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--accent);
+  }
+
+  .byline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--ink-mute);
+    letter-spacing: 0.04em;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+    max-width: 32rem;
+  }
+
+  .byline strong { color: var(--ink); font-weight: 500; }
+
+  /* Body layout */
+  .article {
+    display: grid;
+    grid-template-columns: 4rem 1fr;
+    gap: 2rem;
+    max-width: 52rem;
+  }
+
+  @media (max-width: 720px) {
+    .article { grid-template-columns: 1fr; gap: 0; }
+    .section-num { display: none; }
+  }
+
+  section { display: contents; }
+
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    padding-top: 0.65rem;
+    text-align: right;
+    padding-right: 0.75rem;
+    font-weight: 600;
+    position: relative;
+  }
+
+  .section-num::after {
+    content: '';
+    position: absolute;
+    top: 0.95rem;
+    right: -0.35rem;
+    width: 5px;
+    height: 5px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px var(--paper), 0 0 0 3px var(--accent);
+  }
+
+  .section-body { grid-column: 2; }
+  @media (max-width: 720px) { .section-body { grid-column: 1; } }
+
+  h2 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    font-size: 1.75rem;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    margin-bottom: 1.25rem;
+    color: var(--ink);
+  }
+
+  .section-body + .section-num { margin-top: 3.5rem; }
+  section + section .section-num { margin-top: 3.5rem; }
+  section + section .section-body { margin-top: 3.5rem; }
+
+  p {
+    margin-bottom: 1.15rem;
+    color: var(--ink-soft);
+    max-width: var(--measure);
+  }
+
+  p strong { color: var(--ink); font-weight: 600; }
+  p em { color: var(--ink); font-style: italic; }
+
+  /* Drop cap */
+  .dropcap::first-letter {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    font-size: 4.2rem;
+    line-height: 0.85;
+    float: left;
+    padding: 0.45rem 0.65rem 0 0;
+    color: var(--accent);
+    font-variation-settings: 'opsz' 144;
+  }
+
+  /* Lead paragraph */
+  .lead {
+    font-size: 1.22rem;
+    line-height: 1.5;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+  }
+
+  /* Numbered checklist */
+  .checklist {
+    list-style: none;
+    margin: 1.5rem 0 1.75rem;
+    padding: 0;
+    max-width: var(--measure);
+  }
+
+  .checklist li {
+    display: grid;
+    grid-template-columns: 2.2rem 1fr;
+    gap: 0.75rem;
+    padding: 0.9rem 0;
+    border-top: 1px solid var(--rule);
+    align-items: baseline;
+  }
+
+  .checklist li:last-child { border-bottom: 1px solid var(--rule); }
+
+  .checklist .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    padding-top: 0.15rem;
+  }
+
+  .checklist .q strong {
+    display: block;
+    color: var(--ink);
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+    font-size: 1.02rem;
+  }
+
+  .checklist .q span {
+    color: var(--ink-mute);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  /* Pull quote / callout */
+  .pull {
+    margin: 2rem 0 2rem -1rem;
+    padding: 0 0 0 1.25rem;
+    border-left: 2px solid var(--accent);
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 1.3rem;
+    line-height: 1.4;
+    color: var(--ink);
+    max-width: var(--measure);
+  }
+
+  /* Figure — illustrated diagram */
+  figure {
+    margin: 2.25rem 0;
+    max-width: var(--measure);
+  }
+
+  .figure-frame {
+    background: var(--paper-dark);
+    border: 1px solid var(--rule);
+    padding: 1.5rem;
+    position: relative;
+  }
+
+  /* Photographic crop marks on figure corners */
+  .figure-frame::before,
+  .figure-frame::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border: 1px solid var(--accent);
+  }
+  .figure-frame::before {
+    top: -1px;
+    left: -1px;
+    border-right: none;
+    border-bottom: none;
+  }
+  .figure-frame::after {
+    bottom: -1px;
+    right: -1px;
+    border-left: none;
+    border-top: none;
+  }
+
+  .figure-placeholder {
+    background: var(--paper);
+    border: 1px dashed var(--rule);
+    aspect-ratio: 16 / 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--ink-mute);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    text-align: center;
+    padding: 2rem 1.5rem;
+    letter-spacing: 0.03em;
+  }
+
+  .figure-placeholder span:first-child {
+    color: var(--accent);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    font-size: 0.7rem;
+  }
+
+  figcaption {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--ink-mute);
+    margin-top: 0.85rem;
+    letter-spacing: 0.02em;
+    line-height: 1.55;
+  }
+
+  figcaption strong { color: var(--ink); font-weight: 500; }
+
+  /* SVG diagram style */
+  .diagram-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Footer */
+  .coming-next {
+    margin-top: 4rem;
+    padding: 2rem 0 0;
+    border-top: 1px solid var(--rule);
+    max-width: var(--measure);
+  }
+
+  .coming-next .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.85rem;
+  }
+
+  .coming-next h3 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    font-size: 1.6rem;
+    line-height: 1.25;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  .coming-next h3 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  /* Page footer */
+  .colophon {
+    margin-top: 6rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+
+  .colophon a { color: var(--ink-mute); text-decoration: none; border-bottom: 1px solid var(--rule); }
+  .colophon a:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* Staggered entrance */
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .masthead, .title-block, section, .coming-next, .colophon {
+    animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+  }
+
+  .title-block { animation-delay: 0.1s; }
+  section:nth-of-type(1) { animation-delay: 0.25s; }
+  section:nth-of-type(2) { animation-delay: 0.35s; }
+  section:nth-of-type(3) { animation-delay: 0.45s; }
+  section:nth-of-type(4) { animation-delay: 0.55s; }
+  .coming-next { animation-delay: 0.65s; }
+  .colophon { animation-delay: 0.75s; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header class="masthead">
+    <div class="brand">shahbalayev.com</div>
+    <div class="meta">
+      <span>Field Notes</span>
+      <span>Computer Vision</span>
+      <span>Est. Read · 4 min</span>
+    </div>
+  </header>
+
+  <div class="title-block">
+    <span class="eyebrow">Part 01 · Foundations</span>
+    <h1>Choosing the right camera for your <em>computer vision</em> project.</h1>
+    <p class="byline">
+      <strong>Most CV projects pick the wrong camera.</strong> Not because the engineers are careless — because they start in the wrong place. A practical field guide, beginning with the question almost everyone skips.
+    </p>
+  </div>
+
+  <article class="article">
+
+    <section>
+      <div class="section-num">§ 01</div>
+      <div class="section-body">
+        <h2>Start with the use case. Not the spec sheet.</h2>
+        <p class="lead dropcap">Most computer vision projects pick the wrong camera. Not because the engineers are careless — because they start in the wrong place.</p>
+        <p>They open a spec sheet before they've defined the problem. Resolution, frame rate, sensor size, brand — these are the second question. The first question is almost always skipped: <em>what is this camera actually supposed to see, and under what conditions?</em></p>
+        <p>Skip it, and no spec sheet will save you.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-num">§ 02</div>
+      <div class="section-body">
+        <h2>The same scene can need four different cameras.</h2>
+        <p>A camera that counts pedestrians in a public square is nothing like a camera that reads license plates at 80&nbsp;km/h. A factory inspection line has almost nothing in common with a slow-moving patrol vehicle. Same label on the box. Completely different hardware underneath.</p>
+        <p>Before you shortlist a model, answer four questions:</p>
+
+        <ol class="checklist">
+          <li>
+            <span class="num">01</span>
+            <span class="q"><strong>What are you trying to detect?</strong><span>Faces, plates, objects, defects, behaviors?</span></span>
+          </li>
+          <li>
+            <span class="num">02</span>
+            <span class="q"><strong>How fast is it moving relative to the camera?</strong><span>This one variable drives more decisions than any other.</span></span>
+          </li>
+          <li>
+            <span class="num">03</span>
+            <span class="q"><strong>How much light will you actually have?</strong><span>Not in the demo. At 6 a.m. in winter. Backlit at sunset.</span></span>
+          </li>
+          <li>
+            <span class="num">04</span>
+            <span class="q"><strong>Is the camera stationary, or moving with a vehicle?</strong><span>Mounted platforms and mobile ones play by different rules.</span></span>
+          </li>
+        </ol>
+
+        <figure>
+          <div class="figure-frame">
+            <div class="figure-placeholder">
+              <span>Figure 01</span>
+              <span>Wide-angle square view (many small figures)</span>
+              <span>vs.</span>
+              <span>Narrow long-lens view (one clear license plate)</span>
+            </div>
+          </div>
+          <figcaption><strong>Fig. 01 —</strong> Wide coverage and long-range detail are opposing requirements. One camera cannot do both well.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-num">§ 03</div>
+      <div class="section-body">
+        <h2>Wide or far. Pick one.</h2>
+        <p>A wide-angle lens covering a public square gives you plenty of coverage — but each person occupies a handful of pixels. Reliable face recognition needs roughly <strong>120 pixels of face width</strong>. At 40 pixels, no algorithm will rescue you. The limit isn't resolution — it's optics and geometry. An 8K sensor won't help.</p>
+        <p>Our eyes solve this by rotating, refocusing, and narrowing attention. Cameras don't. A camera has a fixed focal length. Every CV deployment is a choice about which piece of reality to sacrifice.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-num">§ 04</div>
+      <div class="section-body">
+        <h2>The variable most people miss: angular velocity.</h2>
+        <p>Speed in km/h is not what your camera cares about. What matters is <strong>angular velocity</strong> — how fast the target sweeps across the camera's field of view.</p>
+
+        <p class="pull">A car approaching head-on at 60&nbsp;km/h mostly just gets bigger. The same car crossing laterally at 30&nbsp;km/h moves across the frame violently fast.</p>
+
+        <p>Angular velocity is low in the first case — a cheap camera handles it. In the second, you need a fast shutter, a sensitive sensor, and probably a global shutter. Different price bracket entirely.</p>
+        <p>This is why speed bumps, stop signs, and gate barriers are, in a sense, computer vision optimizations. Slow the target down and cheaper hardware starts to work.</p>
+
+        <figure>
+          <div class="figure-frame">
+            <svg class="diagram-svg" viewBox="0 0 640 280" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker id="arrowHead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#d72638"/>
+                </marker>
+                <marker id="arrowHeadBig" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#d72638"/>
+                </marker>
+              </defs>
+
+              <!-- Corner registration marks (photographic/technical feel) -->
+              <g stroke="#0d0d0d" stroke-width="1" fill="none">
+                <path d="M 8 8 L 8 18 M 8 8 L 18 8"/>
+                <path d="M 632 8 L 632 18 M 632 8 L 622 8"/>
+                <path d="M 8 272 L 8 262 M 8 272 L 18 272"/>
+                <path d="M 632 272 L 632 262 M 632 272 L 622 272"/>
+              </g>
+
+              <!-- LEFT SCENARIO: Head-on -->
+              <g>
+                <text x="24" y="28" font-family="JetBrains Mono, monospace" font-size="10" fill="#d72638" letter-spacing="1.5" font-weight="600">A · HEAD-ON</text>
+
+                <!-- Field of view cone -->
+                <path d="M 50 200 L 280 90 L 280 230 Z" fill="none" stroke="#a0a0a0" stroke-width="1" stroke-dasharray="3 3"/>
+
+                <!-- Camera -->
+                <rect x="35" y="190" width="20" height="16" fill="#0d0d0d"/>
+                <circle cx="50" cy="198" r="4" fill="#fafafa"/>
+                <circle cx="50" cy="198" r="1.5" fill="#d72638"/>
+                <text x="45" y="225" font-family="JetBrains Mono, monospace" font-size="9" fill="#757575">CAM</text>
+
+                <!-- Car (distant, smaller) approaching -->
+                <g transform="translate(240, 145)">
+                  <rect x="0" y="8" width="28" height="12" rx="2" fill="#0d0d0d"/>
+                  <rect x="4" y="4" width="20" height="8" rx="1" fill="#2a2a2a"/>
+                  <circle cx="7" cy="22" r="3" fill="#0d0d0d"/>
+                  <circle cx="22" cy="22" r="3" fill="#0d0d0d"/>
+                </g>
+
+                <!-- Small arrow showing low angular motion -->
+                <line x1="255" y1="175" x2="255" y2="190" stroke="#d72638" stroke-width="1.5" marker-end="url(#arrowHead)"/>
+
+                <text x="24" y="258" font-family="JetBrains Mono, monospace" font-size="9" fill="#0d0d0d" font-weight="600">LOW ANGULAR VELOCITY</text>
+                <text x="24" y="270" font-family="Newsreader, serif" font-size="11" font-style="italic" fill="#757575">— cheap camera works.</text>
+              </g>
+
+              <!-- DIVIDER -->
+              <line x1="320" y1="30" x2="320" y2="250" stroke="#d4d4d4" stroke-width="1"/>
+
+              <!-- RIGHT SCENARIO: Lateral -->
+              <g>
+                <text x="344" y="28" font-family="JetBrains Mono, monospace" font-size="10" fill="#d72638" letter-spacing="1.5" font-weight="600">B · LATERAL</text>
+
+                <!-- Field of view cone -->
+                <path d="M 350 200 L 580 90 L 580 230 Z" fill="none" stroke="#a0a0a0" stroke-width="1" stroke-dasharray="3 3"/>
+
+                <!-- Camera -->
+                <rect x="335" y="190" width="20" height="16" fill="#0d0d0d"/>
+                <circle cx="350" cy="198" r="4" fill="#fafafa"/>
+                <circle cx="350" cy="198" r="1.5" fill="#d72638"/>
+                <text x="345" y="225" font-family="JetBrains Mono, monospace" font-size="9" fill="#757575">CAM</text>
+
+                <!-- Car (larger, moving laterally) -->
+                <g transform="translate(430, 130)">
+                  <rect x="0" y="10" width="56" height="18" rx="3" fill="#0d0d0d"/>
+                  <rect x="6" y="4" width="44" height="10" rx="2" fill="#2a2a2a"/>
+                  <circle cx="12" cy="32" r="5" fill="#0d0d0d"/>
+                  <circle cx="44" cy="32" r="5" fill="#0d0d0d"/>
+                </g>
+
+                <!-- Big lateral arrow showing high angular motion -->
+                <line x1="405" y1="148" x2="560" y2="148" stroke="#d72638" stroke-width="2.5" marker-end="url(#arrowHeadBig)"/>
+
+                <text x="344" y="258" font-family="JetBrains Mono, monospace" font-size="9" fill="#0d0d0d" font-weight="600">HIGH ANGULAR VELOCITY</text>
+                <text x="344" y="270" font-family="Newsreader, serif" font-size="11" font-style="italic" fill="#757575">— fast shutter, global shutter, price jumps.</text>
+              </g>
+            </svg>
+          </div>
+          <figcaption><strong>Fig. 02 —</strong> Same vehicle, same speed. Very different camera requirements.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+  </article>
+
+  <div class="coming-next">
+    <div class="label">Next in the series</div>
+    <h3>Once the use case and angular velocity are defined, hardware decisions fall out in a predictable order. We'll start where the physics starts — <em>with the shutter.</em></h3>
+  </div>
+
+  <footer class="colophon">
+    <span>© 2026 · Elnur Shahbalayev</span>
+    <span><a href="https://shahbalayev.com">shahbalayev.com</a></span>
+  </footer>
+
+</div>
+
+</body>
+</html>
